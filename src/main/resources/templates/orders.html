@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заказы</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+<header class="bg-dark text-white py-3">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h1 class="h3 mb-0">Мои заказы</h1>
+        <a th:href="@{/}" class="btn btn-light">На главную</a>
+    </div>
+</header>
+
+<div class="container my-5">
+    <!-- Форма фильтрации -->
+    <form method="get" th:action="@{/orders/my}" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="status" class="form-label">Статус:</label>
+            <select id="status" name="status" class="form-select">
+                <option th:value="'all'" th:selected="${selectedStatus == 'all'}">Все</option>
+                <option th:value="'Создан'" th:selected="${selectedStatus == 'Создан'}">Создан</option>
+                <option th:value="'В доставке'" th:selected="${selectedStatus == 'В доставке'}">В доставке</option>
+                <option th:value="'Получен'" th:selected="${selectedStatus == 'Получен'}">Получен</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="sort" class="form-label">Сортировка:</label>
+            <select id="sort" name="sort" class="form-select">
+                <option th:value="'newest'" th:selected="${sort == 'newest'}">Сначала новые</option>
+                <option th:value="'oldest'" th:selected="${sort == 'oldest'}">Сначала старые</option>
+            </select>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Применить</button>
+        </div>
+    </form>
+
+    <!-- Список заказов — компактные карточки -->
+    <div th:each="order : ${orders}" class="card shadow-sm mb-3 border-0">
+        <div class="card-body py-3 px-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="mb-0 text-secondary">
+                    Заказ <strong>#<span th:text="${order.id}"></span></strong>
+                </h6>
+                <span class="badge"
+                      th:classappend="${order.status} == 'Создан' ? ' bg-danger-subtle text-danger' :
+                      (${order.status} == 'В доставке' ? ' bg-warning text-dark' :
+                      (${order.status} == 'Получен' ? ' bg-success text-white' : ' bg-secondary text-white'))"
+                      th:text="${order.status}"></span>
+            </div>
+            <div class="mb-2">
+                <small class="text-muted">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <span th:text="${order.address}"></span>
+                </small><br>
+                <small class="text-muted">
+                    <i class="bi bi-calendar-event"></i>
+                    <span th:text="${order.date}"></span>
+                </small>
+            </div>
+            <div class="fw-bold mb-2">
+                <span th:text="${order.totalPrice}"></span> ₽
+            </div>
+            <ul class="list-group list-group-flush small">
+                <li th:each="item : ${order.orderItems}" class="list-group-item px-0 py-1">
+                    <span th:text="${item.pizza.name}"></span> —
+                    <span th:text="${item.size}"></span> см —
+                    <span th:text="${item.quantity}"></span> шт.
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
