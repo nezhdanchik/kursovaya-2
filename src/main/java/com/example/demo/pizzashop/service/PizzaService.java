@@ -6,23 +6,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Сервис для работы с пиццами: получение, сохранение, удаление и управление изображениями.
+ */
 @Service
 public class PizzaService {
 
     private final PizzaRepository pizzaRepository;
 
+    /**
+     * Создает экземпляр сервиса с указанием репозитория пицц.
+     *
+     * @param pizzaRepository Репозиторий для работы с данными пицц.
+     */
     public PizzaService(PizzaRepository pizzaRepository) {
         this.pizzaRepository = pizzaRepository;
     }
 
+    /**
+     * Возвращает список всех доступных пицц (у которых {@code available = true}).
+     *
+     * @return Список доступных пицц.
+     */
     public List<Pizza> getAllPizzas() {
         List<Pizza> allPizzas = pizzaRepository.findAll();
         List<Pizza> availablePizzas = new ArrayList<>();
@@ -34,10 +44,22 @@ public class PizzaService {
         return availablePizzas;
     }
 
+    /**
+     * Возвращает пиццу по её ID.
+     *
+     * @param id Уникальный идентификатор пиццы.
+     * @return Объект пиццы или null, если не найден.
+     */
     public Pizza getPizzaById(Long id) {
         return pizzaRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Сохраняет или обновляет данные о пицце, включая загрузку нового изображения.
+     *
+     * @param pizza     Объект пиццы с новыми данными.
+     * @param imageFile Загруженный файл изображения (может быть null).
+     */
     public void save(Pizza pizza, MultipartFile imageFile) {
         Pizza existing;
 
@@ -84,7 +106,11 @@ public class PizzaService {
         pizzaRepository.save(existing);
     }
 
-
+    /**
+     * Помечает пиццу как недоступную и удаляет её изображение с диска.
+     *
+     * @param id Идентификатор пиццы для удаления.
+     */
     public void delete(Long id) {
         Pizza pizza = pizzaRepository.findById(id).orElse(null);
         if (pizza == null) {

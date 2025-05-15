@@ -11,15 +11,30 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Сервис для работы с заказами: создание, фильтрация, сортировка и обновление.
+ */
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    /**
+     * Создает экземпляр сервиса с указанием репозитория заказов.
+     *
+     * @param orderRepository Репозиторий для работы с заказами.
+     */
     public OrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
+    /**
+     * Создает новый заказ на основе данных из корзины.
+     *
+     * @param user      Пользователь, оформляющий заказ.
+     * @param address   Адрес доставки.
+     * @param cartItems Список товаров в корзине.
+     */
     @Transactional
     public void createOrder(User user, String address, List<CartItem> cartItems) {
         Order order = new Order();
@@ -56,11 +71,22 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-
+    /**
+     * Возвращает заказ по его ID.
+     *
+     * @param id Уникальный идентификатор заказа.
+     * @return Объект заказа или null, если не найден.
+     */
     public Order getOrderById(Long id) {
         return orderRepository.findById(id).orElse(null);
     }
 
+    /**
+     * Обновляет статус заказа.
+     *
+     * @param id     Идентификатор заказа.
+     * @param status Новый статус.
+     */
     public void updateStatus(Long id, String status) {
         Order order = getOrderById(id);
         if (order != null) {
@@ -69,20 +95,25 @@ public class OrderService {
         }
     }
 
+    /**
+     * Возвращает отфильтрованный и отсортированный список заказов пользователя.
+     *
+     * @param user     Пользователь (или null для всех заказов).
+     * @param status   Фильтр по статусу ("all" — без фильтра).
+     * @param sortOrder Способ сортировки: newest, oldest, cheapest, most_expensive.
+     * @return Список заказов.
+     */
     public List<Order> getFilteredAndSortedOrders(User user, String status, String sortOrder) {
-        // Получаем заказы: либо все, либо только пользователя
         List<Order> orders = (user == null)
                 ? orderRepository.findAll()
                 : orderRepository.findByUserId(user.getId());
 
-        // Фильтруем по статусу, если нужно
         if (!"all".equalsIgnoreCase(status)) {
             orders = orders.stream()
                     .filter(order -> status.equalsIgnoreCase(order.getStatus()))
                     .toList();
         }
 
-        // Сортируем по нужному признаку
         Comparator<Order> comparator = switch (sortOrder.toLowerCase()) {
             case "newest" -> Comparator.comparing(Order::getDate).reversed();
             case "oldest" -> Comparator.comparing(Order::getDate);
@@ -95,5 +126,4 @@ public class OrderService {
                 .sorted(comparator)
                 .toList();
     }
-
 }

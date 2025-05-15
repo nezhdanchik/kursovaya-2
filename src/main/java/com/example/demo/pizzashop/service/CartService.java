@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.*;
 
+/**
+ * Сервис для управления корзиной покупок с использованием HTTP-сессии.
+ */
 @Service
 public class CartService {
 
@@ -15,10 +18,20 @@ public class CartService {
 
     private static final String CART_SESSION_KEY = "cart";
 
+    /**
+     * Создает экземпляр сервиса с указанной HTTP-сессией.
+     *
+     * @param session HTTP-сессия текущего пользователя.
+     */
     public CartService(HttpSession session) {
         this.session = session;
     }
 
+    /**
+     * Получает текущую корзину из сессии (или создает новую, если её нет).
+     *
+     * @return Карта элементов корзины.
+     */
     @SuppressWarnings("unchecked")
     private Map<String, CartItem> getCart() {
         Map<String, CartItem> cart = (Map<String, CartItem>) session.getAttribute(CART_SESSION_KEY);
@@ -29,6 +42,12 @@ public class CartService {
         return cart;
     }
 
+    /**
+     * Добавляет пиццу в корзину.
+     *
+     * @param pizza Объект пиццы.
+     * @param size  Размер пиццы.
+     */
     public void addToCart(Pizza pizza, String size) {
         Map<String, CartItem> cart = getCart();
         String key = pizza.getId() + "-" + size;
@@ -42,6 +61,12 @@ public class CartService {
         });
     }
 
+    /**
+     * Уменьшает количество указанной пиццы в корзине на 1.
+     *
+     * @param pizzaId ID пиццы.
+     * @param size    Размер пиццы.
+     */
     public void removeOne(String pizzaId, String size) {
         Map<String, CartItem> cart = getCart();
         String key = pizzaId + "-" + size;
@@ -55,16 +80,31 @@ public class CartService {
         }
     }
 
+    /**
+     * Возвращает список всех элементов в корзине.
+     *
+     * @return Список элементов корзины.
+     */
     public List<CartItem> getCartItems() {
         return new ArrayList<>(getCart().values());
     }
 
+    /**
+     * Возвращает общее количество товаров в корзине.
+     *
+     * @return Общее количество товаров.
+     */
     public int getTotalQuantity() {
         return getCart().values().stream()
                 .mapToInt(CartItem::getQuantity)
                 .sum();
     }
 
+    /**
+     * Рассчитывает и возвращает общую стоимость товаров в корзине.
+     *
+     * @return Общая стоимость заказа.
+     */
     public BigDecimal getTotalPrice() {
         BigDecimal total = BigDecimal.ZERO;
 
@@ -83,7 +123,9 @@ public class CartService {
         return total;
     }
 
-
+    /**
+     * Очищает корзину.
+     */
     public void clear() {
         session.removeAttribute(CART_SESSION_KEY);
     }

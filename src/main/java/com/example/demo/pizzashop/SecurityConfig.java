@@ -9,20 +9,40 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+/**
+ * Конфигурационный класс для настройки безопасности с использованием Spring Security.
+ */
 @Configuration
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+    /**
+     * Создает экземпляр конфигурации с указанием сервиса пользователей.
+     *
+     * @param customUserDetailsService Сервис для загрузки данных пользователя.
+     */
     public SecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    /**
+     * Настройка кодировщика паролей (BCrypt).
+     *
+     * @return Bean {@link PasswordEncoder}.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Настройка правил доступа и формы аутентификации.
+     *
+     * @param http Объект HttpSecurity для настройки фильтров безопасности.
+     * @return Сконфигурированный {@link SecurityFilterChain}.
+     * @throws Exception если произошла ошибка при настройке.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
