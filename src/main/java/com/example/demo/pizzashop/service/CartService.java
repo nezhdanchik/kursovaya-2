@@ -51,15 +51,15 @@ public class CartService {
     public void addToCart(Pizza pizza, String size) {
         Map<String, CartItem> cart = getCart();
         String key = pizza.getId() + "-" + size;
-        cart.compute(key, (k, item) -> {
-            if (item == null) {
-                return new CartItem(pizza, size, 1);
-            } else {
-                item.setQuantity(item.getQuantity() + 1);
-                return item;
-            }
-        });
+
+        if (cart.containsKey(key)) {
+            CartItem item = cart.get(key);
+            item.setQuantity(item.getQuantity() + 1);
+        } else {
+            cart.put(key, new CartItem(pizza, size, 1));
+        }
     }
+
 
     /**
      * Уменьшает количество указанной пиццы в корзине на 1.
