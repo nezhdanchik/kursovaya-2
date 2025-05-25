@@ -1,6 +1,6 @@
 package com.example.demo.pizzashop.controller;
 
-import com.example.demo.pizzashop.model.User;
+import com.example.demo.pizzashop.dto.RegistrationForm;
 import com.example.demo.pizzashop.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,24 +31,28 @@ public class AuthController {
      */
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
+        model.addAttribute("form", new RegistrationForm());
         return "register";
     }
 
-    /**
-     * Обрабатывает данные формы регистрации.
-     *
-     * @param user  Данные нового пользователя.
-     * @param model Модель для передачи сообщений об ошибках.
-     * @return "register" при ошибке, иначе перенаправление на страницу входа.
-     */
     @PostMapping("/register")
-    public String registerUser(@ModelAttribute User user, Model model) {
-        if (userService.userExists(user.getUsername())) {
+    public String registerUser(@ModelAttribute("form") RegistrationForm form, Model model) {
+        if (userService.userExists(form.getUsername())) {
             model.addAttribute("error", "Пользователь уже существует");
             return "register";
         }
-        userService.registerUser(user.getUsername(), user.getPassword());
+
+        if (userService.emailExists(form.getEmail())) {
+            model.addAttribute("error", "Этот email уже используется");
+            return "register";
+        }
+
+        if (!form.getPassword().equals(form.getConfirmPassword())) {
+            model.addAttribute("error", "Пароли не совпадают");
+            return "register";
+        }
+
+        userService.registerUser(form.getUsername(), form.getPassword(), form.getEmail());
         return "redirect:/login";
     }
 

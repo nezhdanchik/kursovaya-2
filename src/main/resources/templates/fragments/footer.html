@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer">
+    <div class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-1">Связаться с нами: <a href="tel:+79991234567" class="text-white">+7 (999) 123-45-67</a></p>
+            <p class="mb-1">Email: <a href="mailto:support@pizzashop.ru" class="text-white">support@pizzashop.ru</a></p>
+            <p><a th:href="@{/about}" class="text-white">Об авторе</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

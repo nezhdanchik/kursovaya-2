@@ -5,6 +5,7 @@ import com.example.demo.pizzashop.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,16 +22,28 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerUser(String username, String password) {
+    public void registerUser(String username, String password, String email) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setEmail(email);
         user.setRole("ROLE_USER");
         userRepository.save(user);
     }
 
+
     public Boolean userExists(String username) {
         return userRepository.findByUsername(username) != null;
+    }
+
+    public Boolean emailExists(String email) {
+        ArrayList<User> users = (ArrayList<User>) userRepository.findAll();
+        for (User user : users) {
+            if (user.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

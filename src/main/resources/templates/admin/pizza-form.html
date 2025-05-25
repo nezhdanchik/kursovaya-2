@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+
 <header class="bg-dark text-white py-3">
     <div class="container d-flex justify-content-between align-items-center">
         <h1 class="h3 mb-0" th:text="${action}"></h1>
@@ -18,9 +19,8 @@
     </div>
 </header>
 
-<main class="container my-5">
-    <form th:action="@{/admin/pizzas/save}" method="post" th:object="${pizza}" enctype="multipart/form-data"
-          class="container my-5">
+<main class="container my-5 flex-grow-1">
+    <form th:action="@{/admin/pizzas/save}" method="post" th:object="${pizza}" enctype="multipart/form-data" class="container my-5 p-0">
         <input type="hidden" th:field="*{id}"/>
 
         <div class="mb-3">
@@ -43,7 +43,7 @@
                    accept="image/png, image/jpeg"/>
 
             <div class="mt-2">
-                <img th:if="${pizza.imageUrl}" th:src="@{${pizza.imageUrl}}" alt="Текущее изображение" class="img-thumbnail"
+                <img th:if="${pizza.imageUrl}" th:src="@{'/uploads/' + ${pizza.imageUrl}}" alt="Текущее изображение" class="img-thumbnail"
                      width="120"/>
             </div>
         </div>
@@ -68,17 +68,17 @@
 
         <div class="mb-3">
             <label for="price25" class="form-label">Цена 25 см:</label>
-            <input type="number" id="price25" step="1" th:field="*{price25}" class="form-control" required/>
+            <input type="number" id="price25" step="0.01" th:field="*{price25}" class="form-control" required/>
         </div>
 
         <div class="mb-3">
             <label for="price30" class="form-label">Цена 30 см:</label>
-            <input type="number" id="price30" step="1" th:field="*{price30}" class="form-control" required/>
+            <input type="number" id="price30" step="0.01" th:field="*{price30}" class="form-control" required/>
         </div>
 
         <div class="mb-3">
             <label for="price35" class="form-label">Цена 35 см:</label>
-            <input type="number" id="price35" step="1" th:field="*{price35}" class="form-control" required/>
+            <input type="number" id="price35" step="0.01" th:field="*{price35}" class="form-control" required/>
         </div>
 
         <div class="d-flex justify-content-between">
@@ -91,6 +91,8 @@
         </div>
     </form>
 </main>
+
+<div th:replace="fragments/footer :: footer"></div>
 
 </body>
 </html>

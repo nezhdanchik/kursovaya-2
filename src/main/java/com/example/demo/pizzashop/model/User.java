@@ -45,6 +45,12 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String role;
 
+    @Setter
+    @Getter
+    @Column(unique = true, nullable = false)
+    private String email;
+
+
     @Override
     public String getUsername() {
         return username;

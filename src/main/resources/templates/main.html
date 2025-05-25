@@ -34,7 +34,6 @@
             <div th:if="${role == 'ROLE_ADMIN'}">
                 <a th:href="@{/admin}" class="btn btn-outline-warning btn-sm">Админ панель</a>
             </div>
-            <a th:href="@{/about}" class="btn btn-outline-light btn-sm">Об авторе</a>
             <a th:href="@{/cart}" class="btn btn-outline-success btn-sm">
                 Корзина (<span th:text="${cartCount}">0</span>)
             </a>
@@ -97,6 +96,6 @@
         </div>
     </div>
 </div>
-
+<div th:replace="fragments/footer :: footer"></div>
 </body>
 </html>
